@@ -11,7 +11,7 @@ export const SITE = {
     "Ashish Foundation works towards a more educated, empowered and inclusive society where every individual can live with dignity.",
   location: "Ayodhya, Uttar Pradesh, India",
   email: "contact@ashishfoundation.org", // placeholder
-  phone: "+91-XXXX-XXXXXX", // placeholder
+  phone: "+91 82990 52548",
   address: "Ayodhya, Uttar Pradesh, India", // placeholder
   social: {
     facebook: "#",
@@ -150,13 +150,12 @@ export const JOURNEY_STEPS = [
 ] as const;
 
 // ============================================================
-// Stories of Change — PLACEHOLDER
-// Replace with real beneficiary stories.
+// Stories of Change
 // ============================================================
 export const STORIES = [
   {
     id: "story-1",
-    name: "[Beneficiary Name]",
+    title: "Community Relief & Education Support",
     location: "Ayodhya, Uttar Pradesh",
     programme: "Community Relief",
     image: "/images/community-relief.jpg",
@@ -168,7 +167,7 @@ export const STORIES = [
   },
   {
     id: "story-2",
-    name: "[Beneficiary Name]",
+    title: "Healthcare Camp & Skill Development",
     location: "Ayodhya, Uttar Pradesh",
     programme: "Healthcare Camp",
     image: "/images/healthcare-camp.jpg",
@@ -239,25 +238,25 @@ export const EVENTS = [
 // ============================================================
 export const LEADERSHIP = [
   {
-    name: "[President Name]",
+    name: "Ashish Kaur",
     role: "President",
     bio: "Leading the foundation's mission to create opportunities and empower communities.",
     image: null,
   },
   {
-    name: "[Vice President Name]",
+    name: "Paramveer Singh",
     role: "Vice President",
     bio: "Supporting strategic initiatives and community engagement programmes.",
     image: null,
   },
   {
-    name: "[Treasurer Name]",
+    name: "Inder Singh Bedi",
     role: "Treasurer",
     bio: "Ensuring transparent financial management and accountability.",
     image: null,
   },
   {
-    name: "[Secretary Name]",
+    name: "Neelam Srivastava",
     role: "Secretary",
     bio: "Coordinating organizational activities and communication.",
     image: null,

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import {
   BookOpen,
   Target,
@@ -10,10 +11,11 @@ import {
   Sparkles,
   Scale,
   User,
+  Phone,
 } from "lucide-react";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { LEADERSHIP } from "@/lib/constants";
+import { LEADERSHIP, SITE } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -259,12 +261,42 @@ export default function AboutPage() {
               </ScrollReveal>
             ))}
           </div>
+        </div>
+      </section>
 
-          <ScrollReveal delay={0.5}>
-            <p className="text-center text-xs text-charcoal-light/60 italic mt-8">
-              Leadership information shown as placeholder. Replace with verified
-              team details.
-            </p>
+      {/* Connect & Contact Callout */}
+      <section className="section-padding bg-cream">
+        <div className="container-narrow mx-auto text-center">
+          <ScrollReveal>
+            <div className="bg-white rounded-3xl p-8 md:p-12 border border-forest/5 shadow-sm max-w-2xl mx-auto">
+              <span className="inline-block px-4 py-1.5 text-xs font-medium tracking-widest uppercase text-green border border-green/20 rounded-full bg-green/5 mb-4">
+                Get In Touch
+              </span>
+              <h2
+                className="text-2xl md:text-3xl font-bold text-forest mb-4"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                Connect with Ashish Foundation
+              </h2>
+              <p className="text-charcoal-light mb-8 max-w-md mx-auto text-sm leading-relaxed">
+                Have questions or want to partner with us? Reach out directly to learn more about our programmes and community initiatives.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <a
+                  href={`tel:${SITE.phone.replace(/\s+/g, "")}`}
+                  className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-forest text-white rounded-full font-medium text-sm hover:bg-forest/90 transition-all duration-300 shadow-md shadow-forest/10"
+                >
+                  <Phone className="w-4 h-4 text-saffron" />
+                  <span>Call {SITE.phone}</span>
+                </a>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 border border-forest/15 text-forest rounded-full font-medium text-sm hover:bg-forest/5 transition-colors duration-300"
+                >
+                  Contact Form
+                </Link>
+              </div>
+            </div>
           </ScrollReveal>
         </div>
       </section>

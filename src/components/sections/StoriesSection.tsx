@@ -32,7 +32,7 @@ export default function StoriesSection() {
                   <div className="relative rounded-2xl overflow-hidden aspect-[4/3] img-zoom">
                     <Image
                       src={story.image}
-                      alt={`${story.name} — ${story.programme}`}
+                      alt={`${story.title} — ${story.programme}`}
                       fill
                       className="object-cover"
                       loading="lazy"
@@ -57,7 +57,7 @@ export default function StoriesSection() {
                     className="text-2xl md:text-3xl font-bold text-forest mb-2"
                     style={{ fontFamily: "var(--font-heading)" }}
                   >
-                    Meet {story.name}
+                    {story.title}
                   </h3>
                   <div className="flex items-center gap-2 text-sm text-charcoal-light mb-6">
                     <MapPin className="w-3.5 h-3.5 text-green" />
@@ -85,11 +85,6 @@ export default function StoriesSection() {
                     Read Full Story
                     <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </button>
-
-                  <p className="mt-4 text-[11px] text-charcoal-light/60 italic">
-                    * This is a placeholder story. Replace with a verified
-                    beneficiary narrative.
-                  </p>
                 </div>
               </article>
             </ScrollReveal>
