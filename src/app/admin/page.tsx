@@ -5,14 +5,16 @@ import {
   Heart,
   MessageSquare,
   Users,
-  Calendar,
   IndianRupee,
-  TrendingUp,
   Mail,
   UserPlus,
 } from "lucide-react";
-import { getAdminStats } from "@/lib/storage";
-import { getDonations, getContacts, getVolunteers } from "@/lib/storage";
+import {
+  fetchAdminStats,
+  fetchAdminDonations,
+  fetchAdminContacts,
+  fetchAdminVolunteers,
+} from "@/lib/supabase/db";
 import { motion } from "framer-motion";
 
 export default function AdminDashboard() {
@@ -36,22 +38,35 @@ export default function AdminDashboard() {
   >([]);
 
   useEffect(() => {
-    setStats(getAdminStats());
-    setRecentDonations(
-      getDonations()
-        .slice(0, 5)
-        .map((d) => ({ name: d.name, amount: d.amount, date: d.date, status: d.status }))
-    );
-    setRecentMessages(
-      getContacts()
-        .slice(0, 5)
-        .map((c) => ({ name: c.name, subject: c.subject, date: c.date }))
-    );
-    setRecentVolunteers(
-      getVolunteers()
-        .slice(0, 5)
-        .map((v) => ({ name: v.name, interest: v.interest, date: v.date }))
-    );
+    let mounted = true;
+    Promise.all([
+      fetchAdminStats(),
+      fetchAdminDonations(),
+      fetchAdminContacts(),
+      fetchAdminVolunteers(),
+    ]).then(([s, donations, contacts, volunteers]) => {
+      if (!mounted) return;
+      setStats(s);
+      setRecentDonations(
+        donations
+          .slice(0, 5)
+          .map((d) => ({ name: d.name, amount: d.amount, date: d.date, status: d.status }))
+      );
+      setRecentMessages(
+        contacts
+          .slice(0, 5)
+          .map((c) => ({ name: c.name, subject: c.subject, date: c.date }))
+      );
+      setRecentVolunteers(
+        volunteers
+          .slice(0, 5)
+          .map((v) => ({ name: v.name, interest: v.interest, date: v.date }))
+      );
+    });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const statCards = [

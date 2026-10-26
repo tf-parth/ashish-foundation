@@ -7,7 +7,9 @@ import ScrollReveal from "@/components/ui/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Modal from "@/components/ui/Modal";
 import { EVENTS } from "@/lib/constants";
-import { getStoredEvents, addEventRegistration, type StoredEvent } from "@/lib/storage";
+import { addEventRegistration } from "@/lib/storage";
+import { fetchPublicEvents } from "@/lib/supabase/db";
+import { submitEventRegistration } from "@/app/actions/submit";
 
 interface EventItem {
   id: string;
@@ -23,49 +25,69 @@ export default function EventsSection() {
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
   const [showRegModal, setShowRegModal] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [regForm, setRegForm] = useState({ name: "", email: "", phone: "" });
 
-  // Load admin-created events on mount
+  // Load events on mount from Supabase / local
   useEffect(() => {
-    const storedEvents = getStoredEvents();
-    const combined: EventItem[] = [
-      ...storedEvents.map((e: StoredEvent) => ({
-        id: e.id,
-        title: e.title,
-        date: e.date,
-        location: e.location,
-        description: e.description,
-        image: e.image,
-      })),
-      ...EVENTS,
-    ];
-    setAllEvents(combined);
+    let mounted = true;
+    fetchPublicEvents().then((events) => {
+      if (mounted && events && events.length > 0) {
+        setAllEvents(events);
+      }
+    });
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const handleRegister = (event: EventItem) => {
     setSelectedEvent(event);
+    setErrorMessage("");
     setShowRegModal(true);
   };
 
-  const handleRegSubmit = (e: React.FormEvent) => {
+  const handleRegSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedEvent) return;
 
-    addEventRegistration({
-      eventId: selectedEvent.id,
-      eventTitle: selectedEvent.title,
-      name: regForm.name,
-      email: regForm.email,
-      phone: regForm.phone,
-    });
+    setIsSubmitting(true);
+    setErrorMessage("");
 
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setShowRegModal(false);
-      setRegForm({ name: "", email: "", phone: "" });
-      setSelectedEvent(null);
-    }, 3000);
+    try {
+      const res = await submitEventRegistration({
+        eventId: selectedEvent.id,
+        eventTitle: selectedEvent.title,
+        name: regForm.name,
+        email: regForm.email,
+        phone: regForm.phone,
+      });
+
+      if (res.success) {
+        addEventRegistration({
+          eventId: selectedEvent.id,
+          eventTitle: selectedEvent.title,
+          name: regForm.name,
+          email: regForm.email,
+          phone: regForm.phone,
+        });
+
+        setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+          setShowRegModal(false);
+          setRegForm({ name: "", email: "", phone: "" });
+          setSelectedEvent(null);
+        }, 3000);
+      } else {
+        setErrorMessage(res.message || "Failed to submit registration.");
+      }
+    } catch {
+      setErrorMessage("Network error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const topEvents = allEvents.slice(0, 3);
@@ -262,12 +284,20 @@ export default function EventsSection() {
                 placeholder="+91 XXXXX XXXXX"
               />
             </div>
+
+            {errorMessage && (
+              <div className="p-3 rounded-xl bg-terracotta/10 border border-terracotta/20 text-terracotta text-xs">
+                {errorMessage}
+              </div>
+            )}
+
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-forest hover:bg-forest-light text-white font-semibold rounded-full transition-all duration-300 hover:shadow-lg"
+              disabled={isSubmitting}
+              className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-forest hover:bg-forest-light disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-full transition-all duration-300 hover:shadow-lg"
             >
               <UserPlus className="w-4 h-4" />
-              Register Now
+              {isSubmitting ? "Registering..." : "Register Now"}
             </button>
           </form>
         )}

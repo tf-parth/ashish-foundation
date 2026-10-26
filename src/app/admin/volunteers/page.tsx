@@ -2,19 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { Users, Trash2, Mail } from "lucide-react";
-import { getVolunteers, deleteVolunteer, type Volunteer } from "@/lib/storage";
+import { type Volunteer } from "@/lib/storage";
+import { fetchAdminVolunteers, deleteVolunteerFromDb } from "@/lib/supabase/db";
 import { motion } from "framer-motion";
 
 export default function AdminVolunteersPage() {
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
 
+  const loadVolunteers = () => {
+    fetchAdminVolunteers().then(setVolunteers);
+  };
+
   useEffect(() => {
-    setVolunteers(getVolunteers());
+    loadVolunteers();
   }, []);
 
-  const handleDelete = (id: string) => {
-    deleteVolunteer(id);
-    setVolunteers(getVolunteers());
+  const handleDelete = async (id: string) => {
+    await deleteVolunteerFromDb(id);
+    loadVolunteers();
   };
 
   const formatDate = (dateStr: string) => {

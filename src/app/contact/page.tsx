@@ -17,6 +17,7 @@ import {
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import { SITE } from "@/lib/constants";
 import { addContact } from "@/lib/storage";
+import { submitContactForm } from "@/app/actions/submit";
 
 const socialIcons = [
   { icon: Globe, href: SITE.social.facebook, label: "Facebook" },
@@ -34,6 +35,8 @@ export default function ContactPage() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -41,17 +44,32 @@ export default function ContactPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addContact({
-      name: formData.name,
-      email: formData.email,
-      subject: formData.subject,
-      message: formData.message,
-    });
-    setSubmitted(true);
-    setFormData({ name: "", email: "", subject: "", message: "" });
-    setTimeout(() => setSubmitted(false), 5000);
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const res = await submitContactForm(formData);
+      if (res.success) {
+        // Mirror locally for instant offline preview
+        addContact({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+        });
+        setSubmitted(true);
+        setFormData({ name: "", email: "", subject: "", message: "" });
+        setTimeout(() => setSubmitted(false), 5000);
+      } else {
+        setErrorMessage(res.message || "Could not send message. Please check your input.");
+      }
+    } catch {
+      setErrorMessage("Network error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -194,12 +212,19 @@ export default function ContactPage() {
                       />
                     </div>
 
+                    {errorMessage && (
+                      <div className="p-3.5 rounded-xl bg-terracotta/10 border border-terracotta/20 text-terracotta text-sm">
+                        {errorMessage}
+                      </div>
+                    )}
+
                     <button
                       type="submit"
-                      className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-forest hover:bg-forest-light text-white font-semibold rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-forest/25"
+                      disabled={isSubmitting}
+                      className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-forest hover:bg-forest-light disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-forest/25"
                     >
                       <Send className="w-4 h-4" />
-                      Send Message
+                      {isSubmitting ? "Sending..." : "Send Message"}
                     </button>
                   </form>
                 )}

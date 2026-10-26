@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { AuthProvider } from "@/components/AuthProvider";
 import LayoutShell from "@/components/LayoutShell";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ashishfoundation.org"),
   title: {
     default: "Ashish Foundation — Creating Opportunities. Changing Lives.",
     template: "%s | Ashish Foundation",

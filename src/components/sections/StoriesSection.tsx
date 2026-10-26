@@ -1,12 +1,39 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ArrowRight, MapPin, Bookmark } from "lucide-react";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { STORIES } from "@/lib/constants";
+import { fetchPublicStories } from "@/lib/supabase/db";
+
+interface StoryItem {
+  id: string;
+  title: string;
+  location: string;
+  programme: string;
+  image: string;
+  tagline: string;
+  before: string;
+  after: string;
+}
 
 export default function StoriesSection() {
+  const [stories, setStories] = useState<StoryItem[]>([...STORIES]);
+
+  useEffect(() => {
+    let mounted = true;
+    fetchPublicStories().then((data) => {
+      if (mounted && data && data.length > 0) {
+        setStories(data);
+      }
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <section
       id="stories"
@@ -20,7 +47,7 @@ export default function StoriesSection() {
         />
 
         <div className="space-y-16 md:space-y-24">
-          {STORIES.map((story, i) => (
+          {stories.map((story, i) => (
             <ScrollReveal key={story.id} delay={0.1}>
               <article
                 className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center ${

@@ -11,7 +11,7 @@ import {
   Mail,
   Phone,
 } from "lucide-react";
-import { SITE, NAV_LINKS } from "@/lib/constants";
+import { SITE } from "@/lib/constants";
 
 const footerLinks = [
   {

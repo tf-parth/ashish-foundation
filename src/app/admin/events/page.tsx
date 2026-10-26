@@ -8,12 +8,12 @@ import {
   MapPin,
   X,
 } from "lucide-react";
+import { type StoredEvent } from "@/lib/storage";
 import {
-  getStoredEvents,
-  addStoredEvent,
-  deleteStoredEvent,
-  type StoredEvent,
-} from "@/lib/storage";
+  fetchAdminEvents,
+  createAdminEvent,
+  deleteAdminEvent,
+} from "@/lib/supabase/db";
 import { motion, AnimatePresence } from "framer-motion";
 
 const defaultImages = [
@@ -35,14 +35,18 @@ export default function AdminEventsPage() {
     image: defaultImages[0],
   });
 
+  const loadEvents = () => {
+    fetchAdminEvents().then(setEvents);
+  };
+
   useEffect(() => {
-    setEvents(getStoredEvents());
+    loadEvents();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addStoredEvent(formData);
-    setEvents(getStoredEvents());
+    await createAdminEvent(formData);
+    loadEvents();
     setFormData({
       title: "",
       date: "",
@@ -53,9 +57,9 @@ export default function AdminEventsPage() {
     setShowForm(false);
   };
 
-  const handleDelete = (id: string) => {
-    deleteStoredEvent(id);
-    setEvents(getStoredEvents());
+  const handleDelete = async (id: string) => {
+    await deleteAdminEvent(id);
+    loadEvents();
   };
 
   return (

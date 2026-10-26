@@ -1,33 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MessageSquare, Trash2, Eye, Mail } from "lucide-react";
+import { Trash2, Eye, Mail } from "lucide-react";
+import { type ContactMessage } from "@/lib/storage";
 import {
-  getContacts,
-  deleteContact,
-  markContactRead,
-  type ContactMessage,
-} from "@/lib/storage";
+  fetchAdminContacts,
+  deleteContactFromDb,
+  markContactReadInDb,
+} from "@/lib/supabase/db";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminMessagesPage() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
 
+  const loadMessages = () => {
+    fetchAdminContacts().then(setMessages);
+  };
+
   useEffect(() => {
-    setMessages(getContacts());
+    loadMessages();
   }, []);
 
-  const handleDelete = (id: string) => {
-    deleteContact(id);
-    setMessages(getContacts());
+  const handleDelete = async (id: string) => {
+    await deleteContactFromDb(id);
+    loadMessages();
     if (selectedMessage?.id === id) setSelectedMessage(null);
   };
 
-  const handleView = (msg: ContactMessage) => {
+  const handleView = async (msg: ContactMessage) => {
     if (!msg.read) {
-      markContactRead(msg.id);
-      setMessages(getContacts());
+      await markContactReadInDb(msg.id);
+      loadMessages();
     }
     setSelectedMessage(msg);
   };

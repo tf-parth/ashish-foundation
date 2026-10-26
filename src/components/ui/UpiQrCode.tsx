@@ -32,9 +32,12 @@ export default function UpiQrCode({
 
   useEffect(() => {
     let isMounted = true;
-    setGenerating(true);
 
     async function generateQr() {
+      await Promise.resolve();
+      if (!isMounted) return;
+      setGenerating(true);
+
       try {
         // 1. Generate clean SVG vector for sharp display
         const svg = await QRCode.toString(upiUri, {

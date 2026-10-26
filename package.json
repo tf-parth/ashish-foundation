@@ -11,6 +11,8 @@
     "validate:qr": "node scripts/validate-qr.mjs"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
     "framer-motion": "^13.1.0",
     "jsqr": "^1.4.0",
     "lucide-react": "^1.33.0",
@@ -29,10 +31,5 @@
     "eslint-config-next": "16.3.1",
     "tailwindcss": "^4",
     "typescript": "^5"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "unrs-resolver"
-    ]
   }
 }

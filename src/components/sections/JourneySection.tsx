@@ -33,9 +33,6 @@ export default function JourneySection() {
 
         {/* Journey Path */}
         <div className="relative">
-          {/* Connecting line — desktop */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-forest/10 via-green/30 to-saffron/30 -translate-y-1/2" />
-
           {/* Steps */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-4">
             {JOURNEY_STEPS.map((step, i) => {

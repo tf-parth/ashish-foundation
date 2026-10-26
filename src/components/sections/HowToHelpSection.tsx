@@ -7,6 +7,7 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import Modal from "@/components/ui/Modal";
 import Link from "next/link";
 import { addVolunteer } from "@/lib/storage";
+import { submitVolunteerRegistration } from "@/app/actions/submit";
 
 const helpOptions = [
   {
@@ -64,6 +65,8 @@ const interestOptions = [
 export default function HowToHelpSection() {
   const [showVolunteerModal, setShowVolunteerModal] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -72,15 +75,29 @@ export default function HowToHelpSection() {
     message: "",
   });
 
-  const handleVolunteerSubmit = (e: React.FormEvent) => {
+  const handleVolunteerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addVolunteer(formData);
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setShowVolunteerModal(false);
-      setFormData({ name: "", email: "", phone: "", interest: "Education", message: "" });
-    }, 3000);
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const res = await submitVolunteerRegistration(formData);
+      if (res.success) {
+        addVolunteer(formData);
+        setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+          setShowVolunteerModal(false);
+          setFormData({ name: "", email: "", phone: "", interest: "Education", message: "" });
+        }, 3000);
+      } else {
+        setErrorMessage(res.message || "Failed to submit registration.");
+      }
+    } catch {
+      setErrorMessage("Network error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -239,12 +256,20 @@ export default function HowToHelpSection() {
                 placeholder="Tell us about yourself..."
               />
             </div>
+
+            {errorMessage && (
+              <div className="p-3 rounded-xl bg-terracotta/10 border border-terracotta/20 text-terracotta text-xs">
+                {errorMessage}
+              </div>
+            )}
+
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-green hover:bg-green-dark text-white font-semibold rounded-full transition-all duration-300 hover:shadow-lg"
+              disabled={isSubmitting}
+              className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-green hover:bg-green-dark disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-full transition-all duration-300 hover:shadow-lg"
             >
               <Users className="w-4 h-4" />
-              Register as Volunteer
+              {isSubmitting ? "Registering..." : "Register as Volunteer"}
             </button>
           </form>
         )}

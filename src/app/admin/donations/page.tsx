@@ -2,25 +2,34 @@
 
 import { useEffect, useState } from "react";
 import { Heart, Trash2, IndianRupee, Clock, CheckCircle2 } from "lucide-react";
-import { getDonations, deleteDonation, updateDonationStatus, type Donation } from "@/lib/storage";
+import { type Donation } from "@/lib/storage";
+import {
+  fetchAdminDonations,
+  deleteDonationFromDb,
+  updateDonationStatusInDb,
+} from "@/lib/supabase/db";
 import { motion } from "framer-motion";
 
 export default function AdminDonationsPage() {
   const [donations, setDonations] = useState<Donation[]>([]);
 
-  useEffect(() => {
-    setDonations(getDonations());
-  }, []);
-
-  const handleDelete = (id: string) => {
-    deleteDonation(id);
-    setDonations(getDonations());
+  const loadDonations = () => {
+    fetchAdminDonations().then(setDonations);
   };
 
-  const handleToggleStatus = (id: string, currentStatus: "pending" | "completed") => {
+  useEffect(() => {
+    loadDonations();
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    await deleteDonationFromDb(id);
+    loadDonations();
+  };
+
+  const handleToggleStatus = async (id: string, currentStatus: "pending" | "completed") => {
     const nextStatus = currentStatus === "pending" ? "completed" : "pending";
-    updateDonationStatus(id, nextStatus);
-    setDonations(getDonations());
+    await updateDonationStatusInDb(id, nextStatus);
+    loadDonations();
   };
 
   const totalAmount = donations.reduce((sum, d) => sum + d.amount, 0);

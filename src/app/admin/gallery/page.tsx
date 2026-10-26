@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { ImageIcon, Trash2, Plus, X } from "lucide-react";
+import { Trash2, Plus, X } from "lucide-react";
+import { type GalleryImage } from "@/lib/storage";
 import {
-  getStoredGallery,
-  addGalleryImage,
-  removeGalleryImage,
-  type GalleryImage,
-} from "@/lib/storage";
+  fetchAdminGallery,
+  createAdminGalleryImage,
+  removeAdminGalleryImage,
+} from "@/lib/supabase/db";
 import { GALLERY_IMAGES, GALLERY_CATEGORIES } from "@/lib/constants";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -21,21 +21,25 @@ export default function AdminGalleryPage() {
     category: "Education",
   });
 
+  const loadGallery = () => {
+    fetchAdminGallery().then(setCustomImages);
+  };
+
   useEffect(() => {
-    setCustomImages(getStoredGallery());
+    loadGallery();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addGalleryImage(formData);
-    setCustomImages(getStoredGallery());
+    await createAdminGalleryImage(formData);
+    loadGallery();
     setFormData({ src: "", alt: "", category: "Education" });
     setShowForm(false);
   };
 
-  const handleRemove = (src: string) => {
-    removeGalleryImage(src);
-    setCustomImages(getStoredGallery());
+  const handleRemove = async (src: string) => {
+    await removeAdminGalleryImage(src);
+    loadGallery();
   };
 
   const categories = GALLERY_CATEGORIES.filter((c) => c !== "All");

@@ -21,6 +21,7 @@ import Modal from "@/components/ui/Modal";
 import UpiQrCode from "@/components/ui/UpiQrCode";
 import { DONATION_AMOUNTS } from "@/lib/constants";
 import { addDonation } from "@/lib/storage";
+import { submitDonationPledge } from "@/app/actions/submit";
 import { DONATION_CONFIG, buildAppUpiUrl } from "@/config/donation";
 
 const allocationItems = [
@@ -63,13 +64,24 @@ export default function DonationSection() {
   const handleDetailsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!donorName || !donorEmail || finalAmount <= 0) return;
-    // Record as pending verification (never auto-marked as completed)
+
+    // Record locally for immediate UI preview
     addDonation({
       name: donorName,
       email: donorEmail,
       amount: finalAmount,
       status: "pending",
     });
+
+    // Submit securely to Supabase database via server action
+    submitDonationPledge({
+      name: donorName,
+      email: donorEmail,
+      amount: finalAmount,
+    }).catch((err) => {
+      console.warn("[Donation] Failed to sync pledge to Supabase:", err);
+    });
+
     setStep("payment");
   };
 
@@ -81,6 +93,7 @@ export default function DonationSection() {
 
   const closeConfirmation = () => {
     setShowConfirmation(false);
+    setConfirmProgress(0);
     setStep("details");
     setDonorName("");
     setDonorEmail("");
@@ -91,7 +104,6 @@ export default function DonationSection() {
   // Auto-close confirmation after 8 seconds, with progress
   useEffect(() => {
     if (!showConfirmation) return;
-    setConfirmProgress(0);
     const startTime = Date.now();
     const duration = 8000;
     const interval = setInterval(() => {
@@ -104,7 +116,6 @@ export default function DonationSection() {
       }
     }, 50);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showConfirmation]);
 
   const copyUpiId = async () => {

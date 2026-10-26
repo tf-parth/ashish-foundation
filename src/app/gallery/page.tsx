@@ -1,31 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import { GALLERY_IMAGES, GALLERY_CATEGORIES } from "@/lib/constants";
+import { fetchPublicGallery } from "@/lib/supabase/db";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function GalleryPage() {
+  const [images, setImages] = useState<Array<{ src: string; alt: string; category: string }>>([
+    ...GALLERY_IMAGES,
+  ]);
   const [activeCategory, setActiveCategory] = useState("All");
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [lightboxAlt, setLightboxAlt] = useState("");
 
+  useEffect(() => {
+    let mounted = true;
+    fetchPublicGallery().then((data) => {
+      if (mounted && data && data.length > 0) {
+        setImages(data);
+      }
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const filteredImages =
     activeCategory === "All"
-      ? GALLERY_IMAGES
-      : GALLERY_IMAGES.filter((img) => img.category === activeCategory);
+      ? images
+      : images.filter((img) => img.category === activeCategory);
+
+  useEffect(() => {
+    if (lightboxImage) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [lightboxImage]);
 
   const openLightbox = (src: string, alt: string) => {
     setLightboxImage(src);
     setLightboxAlt(alt);
-    document.body.style.overflow = "hidden";
   };
 
   const closeLightbox = () => {
     setLightboxImage(null);
-    document.body.style.overflow = "";
   };
 
   return (
