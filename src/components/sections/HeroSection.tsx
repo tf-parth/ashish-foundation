@@ -15,12 +15,13 @@ export default function HeroSection() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/hero-bg.jpg"
-          alt="Children learning together in a community education session"
+          src="/images/foundation-team.jpeg"
+          alt="Ashish Foundation members gathered at an event with foundation banner"
           fill
           className="object-cover"
+          style={{ objectPosition: "center 20%" }}
           priority
-          quality={85}
+          quality={90}
         />
         {/* Dark green overlay — strong enough for white text on any image */}
         <div className="absolute inset-0 bg-forest/75" />
