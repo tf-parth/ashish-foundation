@@ -82,7 +82,7 @@ export const PROGRAMMES = [
     title: "Community & Relief",
     description:
       "Support vulnerable communities during difficult circumstances, including disaster situations, food/clothing distribution and other forms of assistance.",
-    image: "/images/community-relief.jpg",
+    image: "/images/community-support.jpg",
     icon: "HandHeart" as const,
   },
 ] as const;
