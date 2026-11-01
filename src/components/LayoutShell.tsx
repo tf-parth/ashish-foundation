@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { type ReactNode } from "react";
 
-const HIDE_SHELL_ROUTES = ["/admin", "/login", "/signup"];
+const HIDE_SHELL_ROUTES = ["/admin", "/user", "/login", "/signup"];
 
 export default function LayoutShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();

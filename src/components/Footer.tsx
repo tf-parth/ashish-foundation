@@ -39,9 +39,9 @@ const footerLinks = [
     links: [
       { label: "Gallery", href: "/gallery" },
       { label: "Annual Reports", href: "/transparency" },
+      { label: "Member Login", href: "/login" },
       { label: "Privacy Policy", href: "#" },
       { label: "Terms of Use", href: "#" },
-      { label: "Accessibility", href: "#" },
     ],
   },
 ];
@@ -135,7 +135,7 @@ export default function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-white/60 hover:text-saffron transition-colors duration-300"
+                      className="text-sm text-white/60 hover:text-saffron transition-colors duration-300 flex items-center gap-1.5"
                     >
                       {link.label}
                     </Link>

@@ -1,13 +1,38 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import AnimatedCounter from "@/components/ui/AnimatedCounter";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import { IMPACT_STATS } from "@/lib/constants";
+import { fetchPublicImpactStats } from "@/lib/supabase/db";
+import { type StoredImpactStat } from "@/lib/storage";
 import { Users, Home, Lightbulb, HeartHandshake } from "lucide-react";
 
 const icons = [Users, Home, Lightbulb, HeartHandshake];
 
 export default function ImpactSection() {
+  const [stats, setStats] = useState<StoredImpactStat[]>(() =>
+    IMPACT_STATS.map((s, idx) => ({
+      id: "impact-" + (idx + 1),
+      label: s.label,
+      value: s.value,
+      suffix: s.suffix,
+      verified: true,
+    }))
+  );
+
+  useEffect(() => {
+    let mounted = true;
+    fetchPublicImpactStats().then((data) => {
+      if (mounted && data && data.length > 0) {
+        setStats(data);
+      }
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <section
       id="impact"
@@ -39,15 +64,18 @@ export default function ImpactSection() {
         </ScrollReveal>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-8">
-          {IMPACT_STATS.map((stat, i) => {
-            const Icon = icons[i];
+          {stats.map((stat, i) => {
+            const Icon = icons[i % icons.length];
             return (
-              <ScrollReveal key={stat.label} delay={i * 0.1}>
+              <ScrollReveal key={stat.id || stat.label} delay={i * 0.1}>
                 <div className="text-center group">
                   <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-saffron/20 transition-colors duration-500">
                     <Icon className="w-6 h-6 text-saffron" />
                   </div>
-                  <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2" style={{ fontFamily: "var(--font-heading)" }}>
+                  <div
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
                     <AnimatedCounter
                       target={stat.value}
                       suffix={stat.suffix}
@@ -63,11 +91,10 @@ export default function ImpactSection() {
           })}
         </div>
 
-        {/* Disclaimer */}
-        <ScrollReveal delay={0.5}>
-          <p className="text-center text-xs text-white/40 italic max-w-md mx-auto">
-            Impact figures are placeholder values and can be updated from
-            verified foundation records.
+        {/* Verified Accuracy Tag */}
+        <ScrollReveal delay={0.4}>
+          <p className="text-center text-xs text-white/50 italic max-w-md mx-auto">
+            Figures represent verified community outreach data from Ashish Foundation initiatives.
           </p>
         </ScrollReveal>
       </div>

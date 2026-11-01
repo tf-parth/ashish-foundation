@@ -1,18 +1,11 @@
 import type { Metadata } from "next";
-import {
-  FileText,
-  Download,
-  Shield,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-} from "lucide-react";
+import { Shield } from "lucide-react";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { TRANSPARENCY_DOCS } from "@/lib/constants";
+import TransparencyDocList from "./TransparencyDocList";
 
 export const metadata: Metadata = {
-  title: "Transparency",
+  title: "Transparency & Governance",
   description:
     "Ashish Foundation is committed to transparency and accountability. Access our reports, certificates and official documents.",
 };
@@ -76,61 +69,16 @@ export default function TransparencyPage() {
             subtitle="Access our official documents and reports."
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {TRANSPARENCY_DOCS.map((doc, i) => (
-              <ScrollReveal key={doc.title} delay={i * 0.08}>
-                <div className="bg-white rounded-2xl p-6 border border-forest/5 hover:border-green/20 transition-all duration-500 hover:shadow-lg h-full flex flex-col">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-forest/5 flex items-center justify-center">
-                      <FileText className="w-6 h-6 text-forest" />
-                    </div>
-                    {doc.available ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-green/10 text-green text-xs font-medium rounded-full">
-                        <CheckCircle className="w-3 h-3" />
-                        Available
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-saffron/10 text-saffron text-xs font-medium rounded-full">
-                        <Clock className="w-3 h-3" />
-                        Coming Soon
-                      </span>
-                    )}
-                  </div>
+          <TransparencyDocList />
 
-                  <h3
-                    className="text-lg font-semibold text-forest mb-2"
-                    style={{ fontFamily: "var(--font-heading)" }}
-                  >
-                    {doc.title}
-                  </h3>
-                  <p className="text-sm text-charcoal-light leading-relaxed flex-1 mb-4">
-                    {doc.description}
-                  </p>
-
-                  {doc.available ? (
-                    <button className="inline-flex items-center gap-2 text-sm font-medium text-green hover:text-forest transition-colors">
-                      <Download className="w-4 h-4" />
-                      Download
-                    </button>
-                  ) : (
-                    <span className="inline-flex items-center gap-2 text-sm text-charcoal-light/50">
-                      <AlertCircle className="w-4 h-4" />
-                      Will be uploaded soon
-                    </span>
-                  )}
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-
-          <ScrollReveal delay={0.5}>
+          <ScrollReveal delay={0.4}>
             <div className="mt-12 bg-cream rounded-2xl p-6 md:p-8 text-center border border-forest/5">
               <p className="text-sm text-charcoal-light leading-relaxed">
                 <strong className="text-forest">Note:</strong> Documents and
-                reports will be uploaded as they become available. For any
-                specific information requests, please{" "}
+                reports are published as they are audited and finalized. For any
+                specific information or compliance requests, please{" "}
                 <a href="/contact" className="text-green hover:text-forest underline">
-                  contact us
+                  contact our team
                 </a>
                 .
               </p>

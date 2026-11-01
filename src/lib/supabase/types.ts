@@ -104,6 +104,7 @@ export interface Database {
           location: string;
           description: string;
           image: string;
+          published: boolean;
           created_at: string;
         };
         Insert: {
@@ -113,6 +114,7 @@ export interface Database {
           location: string;
           description: string;
           image?: string;
+          published?: boolean;
           created_at?: string;
         };
         Update: {
@@ -122,6 +124,7 @@ export interface Database {
           location?: string;
           description?: string;
           image?: string;
+          published?: boolean;
           created_at?: string;
         };
         Relationships: [];
@@ -162,6 +165,7 @@ export interface Database {
           src: string;
           alt: string;
           category: string;
+          published: boolean;
           created_at: string;
         };
         Insert: {
@@ -169,6 +173,7 @@ export interface Database {
           src: string;
           alt: string;
           category?: string;
+          published?: boolean;
           created_at?: string;
         };
         Update: {
@@ -176,6 +181,7 @@ export interface Database {
           src?: string;
           alt?: string;
           category?: string;
+          published?: boolean;
           created_at?: string;
         };
         Relationships: [];
@@ -190,6 +196,7 @@ export interface Database {
           tagline: string;
           before_text: string;
           after_text: string;
+          published: boolean;
           created_at: string;
         };
         Insert: {
@@ -201,6 +208,7 @@ export interface Database {
           tagline: string;
           before_text: string;
           after_text: string;
+          published?: boolean;
           created_at?: string;
         };
         Update: {
@@ -212,7 +220,158 @@ export interface Database {
           tagline?: string;
           before_text?: string;
           after_text?: string;
+          published?: boolean;
           created_at?: string;
+        };
+        Relationships: [];
+      };
+      programmes: {
+        Row: {
+          id: string;
+          title: string;
+          description: string;
+          image: string;
+          icon: string;
+          published: boolean;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          title: string;
+          description: string;
+          image: string;
+          icon?: string;
+          published?: boolean;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          description?: string;
+          image?: string;
+          icon?: string;
+          published?: boolean;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      impact_stats: {
+        Row: {
+          id: string;
+          label: string;
+          value: number;
+          suffix: string;
+          verified: boolean;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          label: string;
+          value: number;
+          suffix?: string;
+          verified?: boolean;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          label?: string;
+          value?: number;
+          suffix?: string;
+          verified?: boolean;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      transparency_docs: {
+        Row: {
+          id: string;
+          title: string;
+          description: string;
+          file_url: string | null;
+          available: boolean;
+          published: boolean;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          description: string;
+          file_url?: string | null;
+          available?: boolean;
+          published?: boolean;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          description?: string;
+          file_url?: string | null;
+          available?: boolean;
+          published?: boolean;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      website_settings: {
+        Row: {
+          id: string;
+          name: string;
+          tagline: string;
+          description: string;
+          location: string;
+          email: string;
+          phone: string;
+          address: string;
+          upi_id: string;
+          upi_name: string;
+          facebook: string;
+          instagram: string;
+          twitter: string;
+          youtube: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          tagline: string;
+          description: string;
+          location: string;
+          email: string;
+          phone: string;
+          address: string;
+          upi_id: string;
+          upi_name: string;
+          facebook?: string;
+          instagram?: string;
+          twitter?: string;
+          youtube?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          tagline?: string;
+          description?: string;
+          location?: string;
+          email?: string;
+          phone?: string;
+          address?: string;
+          upi_id?: string;
+          upi_name?: string;
+          facebook?: string;
+          instagram?: string;
+          twitter?: string;
+          youtube?: string;
+          updated_at?: string;
         };
         Relationships: [];
       };

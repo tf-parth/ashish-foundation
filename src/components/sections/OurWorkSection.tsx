@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   GraduationCap,
@@ -13,6 +14,8 @@ import {
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { PROGRAMMES } from "@/lib/constants";
+import { fetchPublicProgrammes } from "@/lib/supabase/db";
+import { type StoredProgramme } from "@/lib/storage";
 
 const iconMap = {
   GraduationCap,
@@ -24,6 +27,22 @@ const iconMap = {
 };
 
 export default function OurWorkSection() {
+  const [programmes, setProgrammes] = useState<StoredProgramme[]>(() =>
+    PROGRAMMES.map((p) => ({ ...p, published: true }))
+  );
+
+  useEffect(() => {
+    let mounted = true;
+    fetchPublicProgrammes().then((data) => {
+      if (mounted && data && data.length > 0) {
+        setProgrammes(data);
+      }
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <section
       id="our-work"
@@ -37,8 +56,8 @@ export default function OurWorkSection() {
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {PROGRAMMES.map((programme, i) => {
-            const Icon = iconMap[programme.icon as keyof typeof iconMap];
+          {programmes.map((programme, i) => {
+            const Icon = iconMap[programme.icon as keyof typeof iconMap] || Heart;
             return (
               <ScrollReveal key={programme.id} delay={i * 0.08}>
                 <article className="group relative bg-white rounded-2xl overflow-hidden border border-forest/5 hover:border-green/20 transition-all duration-500 hover:shadow-xl hover:shadow-green/5 hover:-translate-y-1.5 h-full flex flex-col">
@@ -70,10 +89,13 @@ export default function OurWorkSection() {
                     <p className="text-sm text-charcoal-light leading-relaxed flex-1 mb-4">
                       {programme.description}
                     </p>
-                    <button className="inline-flex items-center gap-2 text-sm font-medium text-green hover:text-forest transition-colors duration-300 group/link">
+                    <a
+                      href="#contact"
+                      className="inline-flex items-center gap-2 text-sm font-medium text-green hover:text-forest transition-colors duration-300 group/link"
+                    >
                       Learn More
                       <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/link:translate-x-1" />
-                    </button>
+                    </a>
                   </div>
                 </article>
               </ScrollReveal>
